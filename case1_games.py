@@ -52,4 +52,30 @@ def decade_label(year):
 df["Decada"] = df["Year"].apply(decade_label)
 
 
+top5_genres = genre_sales.head(5)
+
+plt.figure(figsize=(12, 6))
+sns.barplot(x=top5_genres.index, y=top5_genres.values, palette="viridis")
+plt.title("Top 5 Gêneros por Vendas Globais", fontsize=16 , fontweight='bold')
+plt.xlabel("Gênero", fontsize=14)
+plt.ylabel("Vendas Globais (milhões)", fontsize=14)
+plt.savefig(OUTPUT_DIR / "top5_genres_global_sales.png")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+games_per_year = df["Year"].value_counts().sort_index()
+
+plt.figure(figsize=(12, 6))
+sns.lineplot(x=games_per_year.index, y=games_per_year.values, marker="o")
+plt.title("Número de Jogos Lançados por Ano", fontsize=16 , fontweight='bold')
+plt.xlabel("Ano", fontsize=14)
+plt.ylabel("Número de Jogos", fontsize=14)
+plt.savefig(OUTPUT_DIR / "games_per_year.png")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
 print(df.head()) 
