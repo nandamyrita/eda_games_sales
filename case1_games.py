@@ -5,8 +5,6 @@ from pathlib import Path
 from typing import Tuple
 import sys
 
-
-
 # Configurações iniciais
 sns.set(style="whitegrid", palette="Greens")
 plt.rcParams["figure.figsize"] = (10, 6)
@@ -45,24 +43,23 @@ def load_and_clean_data(csv_path):
 
     print(f"Linhas iniciais: {inicial_row}, Linhas após limpeza: {final_row}")
     
-
     return df
 
 # Adicionar coluna de década
 def add_decade_column(df):
     def decade_label(year):
         if 1990 <= year <= 1999:
-            return "1990s"
+            return "Anos 90"
         elif 2000 <= year <= 2009:
-            return "2000s"
+            return "Anos 2000"
         elif 2010 <= year <= 2016:
-            return "2010s"
+            return "Anos 2010"
         else:
             return "Outros"
     
     df["Decade"] = df["Year"].apply(decade_label)
-    return df
 
+    return df
 
 # Saber genero e plataforma mais populares
 def get_top_stats(df: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
@@ -70,37 +67,57 @@ def get_top_stats(df: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
     platform_counts = df["Platform"].value_counts()
     return genre_sales, platform_counts
 
-
-#mostrar gráfico de barras 
+#mostrar gráfico de barras dos 5 gêneros mais vendidos globalmente
 def plot_top_genres(genre_sales):
-   
     top5_genres = genre_sales.head(5)
+    top5_df = top5_genres.reset_index()
+    top5_df.columns = ["Genre", "Global_Sales"]
 
     plt.figure(figsize=(12, 6))
-    sns.barplot(x=top5_genres.index, y=top5_genres.values, palette=["#2E7D32", "#43A047", "#66BB6A", "#AED581", "#FFEB3B"])
-    plt.title("Top 5 Gêneros por Vendas Globais", fontsize=16 , fontweight='bold')
+    ax = sns.barplot(
+        data=top5_df,
+        x="Genre",
+        y="Global_Sales",
+        palette=["#2E7D32", "#43A047", "#66BB6A", "#AED581", "#FFEB3B"]
+    )
+
+    for i, v in enumerate(top5_df["Global_Sales"]):
+        ax.text(i, v + 0.5, f"{v:.2f}", ha='center', fontweight='bold')
+
+    plt.title("Top 5 Gêneros Mais Vendidos Globalmente", fontsize=16, fontweight='bold')
     plt.xlabel("Gênero", fontsize=14)
     plt.ylabel("Vendas Globais (milhões)", fontsize=14)
     plt.xticks(rotation=45, ha='right')
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "top5_genres_global_sales.png")
-    
     plt.close()
 
-
-# gerar gráfico de linha
+# Mostrar gráfico de linha de jogos por ano
 def plot_games_per_year(df):
     games_per_year = df["Year"].value_counts().sort_index()
-
-    plt.figure(figsize=(12, 6))
-    sns.lineplot(x=games_per_year.index, y=games_per_year.values, marker="o", color="#2E7D32")
-    plt.title("Número de Jogos Lançados por Ano", fontsize=16 , fontweight='bold')
+    plt.figure(figsize=(14, 7))
+    
+    ax = sns.lineplot(
+        x=games_per_year.index,
+        y=games_per_year.values,
+        marker="o",
+        linewidth=2.5,
+        color="#2E7D32"
+    )
+    
+    for x, y in zip(games_per_year.index, games_per_year.values):
+        ax.text(x, y + 1, str(y), ha='center', fontsize=10, fontweight='bold')
+    
+    plt.title("Número de Jogos Lançados por Ano", fontsize=18, fontweight='bold')
     plt.xlabel("Ano", fontsize=14)
     plt.ylabel("Número de Jogos", fontsize=14)
-    plt.grid(True, alpha=0.6)
+    plt.xticks(rotation=45)
+    plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "games_per_year.png")
     plt.close()
+
 
 # Função principal
 def main():
@@ -109,10 +126,8 @@ def main():
         print("Execução encerrada devido a erro no carregamento de dados.")
         return
 
-    df = add_decade_column(df)
-
     print("\n" + "="*70)
-    print(" TABELA DE AMOSTRA COM COLUNA 'DECADE' ADICIONADA ")
+    print(" TABELA DE AMOSTRA ")
     print("="*70)
     print(df.head().to_string(index=False))
     print("="*70 + "\n")
@@ -121,25 +136,39 @@ def main():
     
     plot_top_genres(genre_sales)
     plot_games_per_year(df)
-    
+
     top_genre = genre_sales.index[0]
     top_genre_sales = genre_sales.iloc[0]
     top_platform = platform_counts.index[0]
     top_platform_count = platform_counts.iloc[0]
+  
+    top5_genres_list = genre_sales.head(5).index.tolist()
 
+    year_counts = df["Year"].value_counts()
+    top_year = year_counts.idxmax()
+    top_year_count = year_counts.max()
+
+    
     print("\n" + "="*70)
     print("                 RELATÓRIO DE ANÁLISE DESCRITIVA")
     print("="*70)
     print(f"Gênero de jogo mais vendido: {top_genre}")
     print(f"Vendas globais totais desse gênero: {top_genre_sales:,.2f} milhões de unidades")
+    print(f"Outros gêneros do Top 5: {', '.join(top5_genres_list[1:])}")
     print(f"Plataforma com maior número de lançamentos: {top_platform}")
     print(f"Total de jogos lançados nessa plataforma: {top_platform_count}")
+    print(f"Ano com mais lançamentos de jogos: {top_year} ({top_year_count} jogos)")
     print("="*70 + "\n")
 
+    
     print("="*70)
     print("                     CONCLUSÃO")
     print("="*70)
-    print(f"Nesta análise, observou-se que o gênero {top_genre} foi o mais vendido globalmente, com um total de {top_genre_sales:,.2f} milhões de unidades, enquanto a plataforma {top_platform} apresentou o maior número de lançamentos ({top_platform_count} jogos). Esses resultados indicam uma forte preferência do mercado por títulos de ação e tiro, além de demonstrar a relevância do PC como principal meio de distribuição de jogos ao longo das últimas décadas.")
+    print(f"Nesta análise, observou-se que o gênero {top_genre} foi o mais vendido globalmente, com um total de {top_genre_sales:,.2f} milhões de unidades.")
+    print(f"Os outros gêneros do Top 5 incluem: {', '.join(top5_genres_list[1:])}, mostrando forte diversidade de estilos de jogo.")
+    print(f"A plataforma {top_platform} apresentou o maior número de lançamentos ({top_platform_count} jogos).")
+    print(f"O ano com mais lançamentos de jogos foi {top_year}, com {top_year_count} jogos, indicando um pico de atividade na indústria.")
+    print("Esses resultados refletem tendências de mercado e preferências do público ao longo do tempo.")
     print("="*70 + "\n")
 
     print("Análise concluída com sucesso. Gráficos salvos na pasta 'outputs'.")
