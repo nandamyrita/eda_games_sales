@@ -83,27 +83,27 @@ Durante o processo de análise, foram realizadas as seguintes etapas:
 
 ## 🚀 Como Executar o Projeto
 
-### 🔧 Passo 1: Clonar o repositório
+### Passo 1: Clonar o repositório
 
 ```bash
 git clone https://github.com/seuusuario/case1_games.git
 cd case1_games
 ```
 
-### 🔧 Passo 2: Criar e ativar ambiente virtual
+### Passo 2: Criar e ativar ambiente virtual
 
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
-### 🔧 Passo 3: Instalar dependências
+### Passo 3: Instalar dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 🔧 Passo 4: Executar o script principal
+### Passo 4: Executar o script principal
 
 ```bash
 python case1_games.py
@@ -113,19 +113,19 @@ python case1_games.py
 
 | Métrica                              | Resultado |
 | ------------------------------------ | --------- |
-| 🕹️ Gênero mais vendido               | Shooter   |
-| 💻 Plataforma com mais lançamentos   | PC        |
-| 📆 Década com maior volume de vendas | 2010s     |
+| Gênero mais vendido               | Shooter   |
+| Plataforma com mais lançamentos   | PC        |
+| Década com maior volume de vendas | 2010s     |
 
 ---
 
 ## 🌱 Possíveis Extensões Futuras
 
-- 📊 Criação de dashboard interativo (Streamlit ou React + Flask)
-- 🔮 Previsão de vendas futuras com **Machine Learning**
-- 🧭 Comparação entre **regiões geográficas**
-- 💬 Análises de **tendências de mercado** com NLP
-- 🧠 Integração com APIs externas de dados de games (ex: RAWG API)
+- Criação de dashboard interativo (Streamlit ou React + Flask)
+- Previsão de vendas futuras com **Machine Learning**
+- Comparação entre **regiões geográficas**
+- Análises de **tendências de mercado** com NLP
+- Integração com APIs externas de dados de games (ex: RAWG API)
 
 ---
 
@@ -158,9 +158,9 @@ Atua com Python, Java, React e Tailwind CSS, e tem grande interesse em unir tecn
 
 ## ⚠️ Avisos Importantes
 
-> 🔒 **Segurança:** Nenhuma credencial sensível foi incluída neste repositório.  
-> 📊 **Licença de Dados:** Dataset utilizado apenas para fins **acadêmicos e educacionais**.  
-> 💡 **Propósito:** Projeto de análise de dados desenvolvido para fins de **avaliação técnica**.  
-> 🧠 **Observação:** Resultados baseiam-se apenas na amostra fornecida e podem variar conforme a base de dados.
+> **Segurança:** Nenhuma credencial sensível foi incluída neste repositório.  
+> **Licença de Dados:** Dataset utilizado apenas para fins **acadêmicos e educacionais**.  
+> **Propósito:** Projeto de análise de dados desenvolvido para fins de **avaliação técnica**.  
+> **Observação:** Resultados baseiam-se apenas na amostra fornecida e podem variar conforme a base de dados.
 
 ---

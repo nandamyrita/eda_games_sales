@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 from typing import Tuple
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
+import numpy as np
 import sys
+       
 
 # Configurações iniciais
 sns.set(style="whitegrid", palette="Greens")
@@ -118,6 +122,34 @@ def plot_games_per_year(df):
     plt.savefig(OUTPUT_DIR / "games_per_year.png")
     plt.close()
 
+# Machine Learning: K-Means e Regressão Linear
+def apply_machine_learning(df):
+    X = df[["Global_Sales"]].values
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    df["Sales_Cluster"] = kmeans.fit_predict(X)
+
+    plt.figure(figsize=(10, 6))
+    sns.histplot(data=df, x="Global_Sales", hue="Sales_Cluster", bins=30, palette="Set2", multiple="stack")
+    plt.title("Clusters de Vendas Globais (Baixas, Médias, Altas)")
+    plt.xlabel("Vendas Globais (milhões)")
+    plt.ylabel("Número de Jogos")
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / "sales_clusters.png")
+    plt.close()
+
+    games_per_year = df.groupby("Year").size().reset_index(name="Num_Games")
+    X = games_per_year["Year"].values.reshape(-1, 1)
+    y = games_per_year["Num_Games"].values
+
+    model = LinearRegression()
+    model.fit(X, y)
+
+    future_years = np.array([2017, 2018, 2019, 2020]).reshape(-1, 1)
+    predictions = model.predict(future_years)
+
+    for year, pred in zip(future_years.flatten(), predictions):
+        print(f"Previsão de jogos lançados em {year}: {int(pred)}")
+
 
 # Função principal
 def main():
@@ -125,6 +157,8 @@ def main():
     if df is None:
         print("Execução encerrada devido a erro no carregamento de dados.")
         return
+    
+    df = add_decade_column(df)
 
     print("\n" + "="*70)
     print(" TABELA DE AMOSTRA ")
@@ -137,13 +171,13 @@ def main():
     plot_top_genres(genre_sales)
     plot_games_per_year(df)
 
+    apply_machine_learning(df)
+
     top_genre = genre_sales.index[0]
     top_genre_sales = genre_sales.iloc[0]
     top_platform = platform_counts.index[0]
     top_platform_count = platform_counts.iloc[0]
-  
     top5_genres_list = genre_sales.head(5).index.tolist()
-
     year_counts = df["Year"].value_counts()
     top_year = year_counts.idxmax()
     top_year_count = year_counts.max()
@@ -168,7 +202,7 @@ def main():
     print(f"Os outros gêneros do Top 5 incluem: {', '.join(top5_genres_list[1:])}, mostrando forte diversidade de estilos de jogo.")
     print(f"A plataforma {top_platform} apresentou o maior número de lançamentos ({top_platform_count} jogos).")
     print(f"O ano com mais lançamentos de jogos foi {top_year}, com {top_year_count} jogos, indicando um pico de atividade na indústria.")
-    print("Esses resultados refletem tendências de mercado e preferências do público ao longo do tempo.")
+    print("Também aplicamos Machine Learning: agrupamos os jogos por vendas (clusters) e fizemos previsão de lançamentos futuros.")
     print("="*70 + "\n")
 
     print("Análise concluída com sucesso. Gráficos salvos na pasta 'outputs'.")
